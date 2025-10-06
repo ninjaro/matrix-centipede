@@ -28,7 +28,7 @@
 
 namespace dm {
 
-enum class mul_algo { native, transpose, block_ijk, block_ikj };
+enum class mul_algo { native, transpose, block_ijp, block_ipj };
 
 template <class T>
 concept matmul_scalar = std::default_initializable<T>
@@ -82,22 +82,24 @@ private:
 
     [[nodiscard]] bool in_bounds(size_t r, size_t c) const noexcept;
     [[nodiscard]] size_t index_of(size_t r, size_t c) const noexcept;
-    [[nodiscard]] size_t optimal_tile() const;
+    static size_t optimal_tile() noexcept;
+    static size_t
+    optimal_tile(size_t m = 0, size_t n = 0, size_t k = 0) noexcept;
 
-    [[nodiscard]] dense_matrix transpose_tile(size_t tile = -1ull) const;
+    [[nodiscard]] dense_matrix transpose_tile(size_t tile = 0) const;
     [[nodiscard]] dense_matrix transpose() const;
 
     static dense_matrix
     mul_native(const dense_matrix& a, const dense_matrix& b);
 
     static dense_matrix
-    mul_transpose(const dense_matrix& a, const dense_matrix& b);
+    mul_transpose(const dense_matrix& a, const dense_matrix& b, size_t tile);
 
     static dense_matrix
-    mul_block_ikj(const dense_matrix& a, const dense_matrix& b, size_t tile);
+    mul_block_ipj(const dense_matrix& a, const dense_matrix& b, size_t tile);
 
     static dense_matrix
-    mul_block_ijk(const dense_matrix& a, const dense_matrix& b, size_t tile);
+    mul_block_ijp(const dense_matrix& a, const dense_matrix& b, size_t tile);
 };
 
 }
