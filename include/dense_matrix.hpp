@@ -82,7 +82,6 @@ private:
 
     [[nodiscard]] bool in_bounds(size_t r, size_t c) const noexcept;
     [[nodiscard]] size_t index_of(size_t r, size_t c) const noexcept;
-    static size_t optimal_tile() noexcept;
     static size_t
     optimal_tile(size_t m = 0, size_t n = 0, size_t k = 0) noexcept;
 
@@ -103,5 +102,7 @@ private:
 };
 
 }
+
+#include "dense_matrix.tpp"
 
 #endif // MATRIX_CENTIPEDE_DENSE_MATRIX_HPP

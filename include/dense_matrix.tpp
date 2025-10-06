@@ -113,10 +113,6 @@ dense_matrix<T>::index_of(const size_t r, const size_t c) const noexcept {
     return r * col_count + c;
 }
 
-template <matmul_scalar T> size_t dense_matrix<T>::optimal_tile() noexcept {
-    return 42;
-}
-
 template <matmul_scalar T>
 size_t dense_matrix<T>::optimal_tile(
     const size_t m, const size_t n, const size_t k
@@ -261,7 +257,7 @@ dense_matrix<T> dense_matrix<T>::transpose_tile(size_t tile) const {
     }
 
     if (!tile) {
-        tile = optimal_tile();
+        tile = optimal_tile(n, m);
     }
 
     const T* __restrict__ a = values.data();
