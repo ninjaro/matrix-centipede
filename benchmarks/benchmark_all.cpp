@@ -21,5 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "dense_matrix.hpp"
+#include <benchmark/benchmark.h>
 
-int main() { return 0; }
+using dm::dense_matrix;

@@ -21,3 +21,36 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+#include "dense_matrix.hpp"
+#include <gtest/gtest.h>
+
+using dm::dense_matrix;
+
+TEST(DenseMatrix, EmptyConstruct) {
+    dense_matrix m;
+    EXPECT_EQ(m.rows(), 0u);
+    EXPECT_EQ(m.cols(), 0u);
+    EXPECT_EQ(m.size(), 0u);
+}
+
+TEST(DenseMatrix, InitListConstructAndAccess) {
+    dense_matrix<double> m(2, 3, { 1, 2, 3, 4, 5, 6 });
+    EXPECT_EQ(m.rows(), 2u);
+    EXPECT_EQ(m.cols(), 3u);
+    EXPECT_DOUBLE_EQ(m.at(0, 0), 1.0);
+    EXPECT_DOUBLE_EQ(m.at(1, 2), 6.0);
+    m(0, 1) = 42.0;
+    EXPECT_DOUBLE_EQ(m.at(0, 1), 42.0);
+}
+
+TEST(DenseMatrix, PointerAndSpanCtor) {
+    const double buf[6] = { 1, 2, 3, 4, 5, 6 };
+    dense_matrix a(2, 3, buf);
+    EXPECT_DOUBLE_EQ(a.at(1, 1), 5.0);
+}
+
+TEST(DenseMatrix, AtThrows) {
+    dense_matrix<int> m(1, 1, { 7 });
+    EXPECT_THROW(m.at(1, 0), std::out_of_range);
+    EXPECT_THROW(m.at(0, 1), std::out_of_range);
+}

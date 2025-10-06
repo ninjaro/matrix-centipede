@@ -1,13 +1,10 @@
-<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;--size:clamp(92px,14vw,128px);--overlap:clamp(-48px,-6vw,-24px);--shift:12px;">
-  <img src="assets/banner.svg" alt="Matrix Centipede banner (rotated)" style="height:var(--size);margin-right:var(--overlap);position:relative;top:calc(var(--shift)*-1);transform:rotate(180deg);transform-origin:50% 50%;">
-  <h1 style="margin:0;line-height:1.05;text-align:center;">
-    <span style="display:block;padding-left:.25em;">The Matrix</span>
-    <span style="display:block;padding-left:.25em;">Centipede</span>
-    <span style="display:block;font-weight:400;opacity:.7;">(New Sequence)</span>
-  </h1>
-  <img src="assets/banner.svg" alt="Matrix Centipede banner" style="height:var(--size);margin-left:var(--overlap);position:relative;top:var(--shift);z-index:2;pointer-events:none;">
-</div>
+![matrix-centipede-Light](assets/lbanner.svg#gh-light-mode-only)![matrix-centipede-Dark](assets/dbanner.svg#gh-dark-mode-only)
 
+[![version](https://img.shields.io/github/v/release/ninjaro/matrix-centipede?include_prereleases)](https://github.com/ninjaro/matrix-centipede/releases/latest)
+[![Checks](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml/badge.svg)](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml)
+[![Deploy](https://github.com/ninjaro/matrix-centipede/actions/workflows/html.yml/badge.svg)](https://github.com/ninjaro/matrix-centipede/actions/workflows/html.yml)
+[![codecov](https://codecov.io/gh/ninjaro/matrix-centipede/graph/badge.svg?token=5XTA5DNO4S)](https://codecov.io/gh/ninjaro/matrix-centipede)[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2288fe837def4b1b9d89f170e9d63594)](https://app.codacy.com/gh/ninjaro/matrix-centipede/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![license](https://img.shields.io/github/license/ninjaro/matrix-centipede?color=e6e6e6)](https://github.com/ninjaro/matrix-centipede/blob/master/license)
 
 <p align="right">October 4th, 2025.</p>
 
