@@ -40,7 +40,7 @@ concept matmul_scalar = std::default_initializable<T>
 
 template <matmul_scalar T = double> class dense_matrix {
 public:
-    dense_matrix() = default;
+    dense_matrix() noexcept = default;
     dense_matrix(size_t rows, size_t cols);
     dense_matrix(size_t rows, size_t cols, const T* data);
     dense_matrix(size_t rows, size_t cols, std::initializer_list<T> init);

@@ -1,0 +1,65 @@
+2025-10-07T10:01:16+02:00
+Running ./bench_all
+Run on (22 X 1400 MHz CPU s)
+CPU Caches:
+  L1 Data 48 KiB (x11)
+  L1 Instruction 64 KiB (x11)
+  L2 Unified 2048 KiB (x11)
+  L3 Unified 24576 KiB (x1)
+Load Average: 2.62, 1.88, 1.81
+***WARNING*** CPU scaling is enabled, the benchmark real time measurements may be noisy and will incur extra overhead.
+-------------------------------------------------------------------------------------------
+Benchmark                                 Time             CPU   Iterations UserCounters...
+-------------------------------------------------------------------------------------------
+BM_DM/native/n:32/repeats:1           16657 ns        16529 ns        42113 FLOPs=3.84105G/s
+BM_DM/native/n:48/repeats:1           39338 ns        39076 ns        17901 FLOPs=5.54238G/s
+BM_DM/native/n:64/repeats:1          101908 ns       101137 ns         7095 FLOPs=5.10292G/s
+BM_DM/native/n:96/repeats:1          405635 ns       401903 ns         1937 FLOPs=4.35687G/s
+BM_DM/native/n:128/repeats:1         950682 ns       936106 ns          646 FLOPs=4.44558G/s
+BM_DM/native/n:160/repeats:1        1803787 ns      1790878 ns          394 FLOPs=4.5457G/s
+BM_DM/native/n:192/repeats:1        3205571 ns      3184023 ns          218 FLOPs=4.42272G/s
+BM_DM/native/n:224/repeats:1        5218923 ns      5182962 ns          136 FLOPs=4.3177G/s
+BM_DM/native/n:256/repeats:1        8645274 ns      8547309 ns           80 FLOPs=3.9104G/s
+BM_DM/native/n:384/repeats:1       29436577 ns     29154361 ns           23 FLOPs=3.87425G/s
+BM_DM/native/n:512/repeats:1       77058214 ns     76446274 ns            8 FLOPs=3.50457G/s
+BM_DM/native/n:768/repeats:1      355495813 ns    352546549 ns            2 FLOPs=2.56644G/s
+BM_DM/native/n:1024/repeats:1     839435506 ns    831611397 ns            1 FLOPs=2.57979G/s
+BM_DM/transpose/n:32/repeats:1        25182 ns        25037 ns        28008 FLOPs=2.53579G/s
+BM_DM/transpose/n:48/repeats:1        88291 ns        87623 ns         8224 FLOPs=2.47169G/s
+BM_DM/transpose/n:64/repeats:1       211799 ns       210097 ns         3135 FLOPs=2.45647G/s
+BM_DM/transpose/n:96/repeats:1       957815 ns       947826 ns          969 FLOPs=1.84743G/s
+BM_DM/transpose/n:128/repeats:1     2636644 ns      2615215 ns          238 FLOPs=1.59128G/s
+BM_DM/transpose/n:160/repeats:1     4507935 ns      4475791 ns          166 FLOPs=1.81885G/s
+BM_DM/transpose/n:192/repeats:1     7026188 ns      6983363 ns           99 FLOPs=2.01651G/s
+BM_DM/transpose/n:224/repeats:1    11495462 ns     11422253 ns           60 FLOPs=1.9592G/s
+BM_DM/transpose/n:256/repeats:1    17915902 ns     17804424 ns           39 FLOPs=1.87725G/s
+BM_DM/transpose/n:384/repeats:1    68366108 ns     67914645 ns           10 FLOPs=1.66314G/s
+BM_DM/transpose/n:512/repeats:1   171279651 ns    170072914 ns            3 FLOPs=1.57527G/s
+BM_DM/transpose/n:768/repeats:1   608708893 ns    603941394 ns            1 FLOPs=1.49814G/s
+BM_DM/transpose/n:1024/repeats:1 1479986674 ns   1468574346 ns            1 FLOPs=1.46086G/s
+BM_DM/block_ijp/n:32/repeats:1        19301 ns        19196 ns        36484 FLOPs=3.30737G/s
+BM_DM/block_ijp/n:48/repeats:1        61380 ns        61029 ns        11474 FLOPs=3.54875G/s
+BM_DM/block_ijp/n:64/repeats:1       145020 ns       144149 ns         4869 FLOPs=3.5803G/s
+BM_DM/block_ijp/n:96/repeats:1       578836 ns       574676 ns         1445 FLOPs=3.047G/s
+BM_DM/block_ijp/n:128/repeats:1     1363082 ns      1345965 ns          598 FLOPs=3.09186G/s
+BM_DM/block_ijp/n:160/repeats:1     2374249 ns      2350916 ns          306 FLOPs=3.46282G/s
+BM_DM/block_ijp/n:192/repeats:1     3962246 ns      3935783 ns          154 FLOPs=3.57795G/s
+BM_DM/block_ijp/n:224/repeats:1     6299308 ns      6256444 ns          112 FLOPs=3.57687G/s
+BM_DM/block_ijp/n:256/repeats:1    15357297 ns     15235574 ns           50 FLOPs=2.19377G/s
+BM_DM/block_ijp/n:384/repeats:1    37433217 ns     37146173 ns           15 FLOPs=3.04072G/s
+BM_DM/block_ijp/n:512/repeats:1    91192110 ns     90584961 ns            8 FLOPs=2.95757G/s
+BM_DM/block_ijp/n:768/repeats:1   299769440 ns    297719707 ns            2 FLOPs=3.03907G/s
+BM_DM/block_ijp/n:1024/repeats:1  763016560 ns    757734338 ns            1 FLOPs=2.83132G/s
+BM_DM/block_ipj/n:32/repeats:1        19332 ns        19217 ns        36437 FLOPs=3.30367G/s
+BM_DM/block_ipj/n:48/repeats:1        61479 ns        61128 ns        11345 FLOPs=3.54297G/s
+BM_DM/block_ipj/n:64/repeats:1       146091 ns       145259 ns         4838 FLOPs=3.55294G/s
+BM_DM/block_ipj/n:96/repeats:1       496802 ns       493858 ns         1424 FLOPs=3.54563G/s
+BM_DM/block_ipj/n:128/repeats:1     1843854 ns      1831234 ns          522 FLOPs=2.27253G/s
+BM_DM/block_ipj/n:160/repeats:1     3560254 ns      3534296 ns          198 FLOPs=2.30337G/s
+BM_DM/block_ipj/n:192/repeats:1     6055951 ns      6011453 ns          115 FLOPs=2.34254G/s
+BM_DM/block_ipj/n:224/repeats:1     6557105 ns      6509644 ns          111 FLOPs=3.43774G/s
+BM_DM/block_ipj/n:256/repeats:1    11267094 ns     11194714 ns           65 FLOPs=2.98564G/s
+BM_DM/block_ipj/n:384/repeats:1    46766282 ns     46443340 ns           14 FLOPs=2.43202G/s
+BM_DM/block_ipj/n:512/repeats:1   128881715 ns    128034477 ns            5 FLOPs=2.09249G/s
+BM_DM/block_ipj/n:768/repeats:1   296209313 ns    294444706 ns            2 FLOPs=3.07287G/s
+BM_DM/block_ipj/n:1024/repeats:1  862253375 ns    855953812 ns            1 FLOPs=2.50643G/s
