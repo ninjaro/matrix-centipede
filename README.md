@@ -17,6 +17,20 @@
 > modern programming language ought to be—do play at baubles befitting its age, appropriate foreign artefacts, and
 > desecrate the limbs of its forefathers.
 
+# Setup and Installation
+
+## Requirements
+
+* C++20 compiler (GCC or Clang recommended)
+* CMake at least 3.28
+* Optional:
+
+    * **GTest**: for unit tests (`BUILD_TESTS=ON`)
+    * **Google Benchmark**: for benchmarks (`BUILD_BENCHMARKS=ON`)
+    * **Eigen3**: for extra test/bench comparisons if found
+    * **Python 3 + matplotlib**: for plotting benchmark results via `scripts/bench_plot.py`
+    * **llvm-cov + llvm-profdata** (Clang) or **gcovr** (GCC): for coverage reports (`ENABLE_COVERAGE=ON`)
+
 ## Security Policy
 
 Please report any security issues using GitHub's private vulnerability reporting

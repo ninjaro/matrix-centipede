@@ -165,24 +165,24 @@ BENCHMARK_CAPTURE(BM_DM, transpose, mul_algo::transpose)
     ->Repetitions(DM_BENCH_REPETITIONS)
     ->ReportAggregatesOnly(true);
 
-BENCHMARK_CAPTURE(BM_DM, block_ijp_opt, mul_algo::block_ijp)
+BENCHMARK_CAPTURE(BM_DM, block_ijp, mul_algo::block_ijp)
     ->ArgName("n")
     ->Apply(sizes)
     ->Repetitions(DM_BENCH_REPETITIONS)
     ->ReportAggregatesOnly(true);
 
-BENCHMARK_CAPTURE(BM_DM, block_ipj_opt, mul_algo::block_ipj)
+BENCHMARK_CAPTURE(BM_DM, block_ipj, mul_algo::block_ipj)
     ->ArgName("n")
     ->Apply(sizes)
     ->Repetitions(DM_BENCH_REPETITIONS)
     ->ReportAggregatesOnly(true);
 
-#ifdef HAVE_EIGEN
-BENCHMARK(BM_Eigen)
-    ->ArgName("n")
-    ->Apply(sizes)
-    ->Repetitions(DM_BENCH_REPETITIONS)
-    ->ReportAggregatesOnly(true);
-#endif
+// #ifdef HAVE_EIGEN
+// BENCHMARK(BM_Eigen)
+//     ->ArgName("n")
+//     ->Apply(sizes)
+//     ->Repetitions(DM_BENCH_REPETITIONS)
+//     ->ReportAggregatesOnly(true);
+// #endif
 
 BENCHMARK_MAIN();

@@ -26,6 +26,7 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <memory>
 #include <span>
 #include <stdexcept>
 
@@ -182,6 +183,12 @@ dense_matrix<T>::operator()(const size_t r, const size_t c) const noexcept {
 template <matmul_scalar T>
 dense_matrix<T>
 dense_matrix<T>::add(const dense_matrix& a, const dense_matrix& b) {
+    if (a.size() == 0) {
+        return b;
+    }
+    if (b.size() == 0) {
+        return a;
+    }
     if (a.row_count != b.row_count || a.col_count != b.col_count) {
         throw std::invalid_argument("dense_matrix::add: shape mismatch");
     }
@@ -200,6 +207,29 @@ dense_matrix<T> dense_matrix<T>::add(const dense_matrix& other) const {
 template <matmul_scalar T>
 dense_matrix<T> dense_matrix<T>::operator+(const dense_matrix& other) const {
     return add(*this, other);
+}
+
+template <matmul_scalar T>
+dense_matrix<T>& dense_matrix<T>::operator+=(const dense_matrix& rhs) {
+    if (rhs.size() == 0) {
+        return *this;
+    }
+    if (values.empty()) {
+        row_count = rhs.row_count;
+        col_count = rhs.col_count;
+        values = rhs.values;
+        return *this;
+    }
+    if (row_count != rhs.row_count || col_count != rhs.col_count) {
+        throw std::invalid_argument("dense_matrix::operator+=: shape mismatch");
+    }
+    const size_t n = values.size();
+    T* dst = values.data();
+    const T* src = rhs.values.data();
+    for (size_t i = 0; i < n; ++i) {
+        dst[i] += src[i];
+    }
+    return *this;
 }
 
 template <matmul_scalar T>
@@ -315,9 +345,11 @@ dense_matrix<T>::mul_native(const dense_matrix& a, const dense_matrix& b) {
         return out;
     }
 
-    const T* a_ptr = a.values.data();
-    const T* b_ptr = b.values.data();
-    T* __restrict__ c_ptr = out.values.data();
+    const T* __restrict__ a_ptr
+        = std::assume_aligned<alignof(T)>(a.values.data());
+    const T* __restrict__ b_ptr
+        = std::assume_aligned<alignof(T)>(b.values.data());
+    T* __restrict__ c_ptr = std::assume_aligned<alignof(T)>(out.values.data());
 
     for (size_t i = 0; i < m; ++i) {
         const size_t a_off = i * k;
@@ -330,7 +362,8 @@ dense_matrix<T>::mul_native(const dense_matrix& a, const dense_matrix& b) {
             T* __restrict__ c_acc = c_row;
             const T* b_acc = b_row;
             for (size_t j = 0; j < n; ++j) {
-                *c_acc++ += a_ip * *b_acc++;
+                T& c_ref = *c_acc++;
+                c_ref = c_ref + a_ip * *b_acc++;
             }
         }
     }
@@ -339,7 +372,7 @@ dense_matrix<T>::mul_native(const dense_matrix& a, const dense_matrix& b) {
 
 template <matmul_scalar T>
 dense_matrix<T> dense_matrix<T>::mul_transpose(
-    const dense_matrix& a, const dense_matrix& b, size_t tile
+    const dense_matrix& a, const dense_matrix& b, const size_t tile
 ) {
     const size_t m = a.row_count;
     const size_t k = a.col_count;
@@ -351,7 +384,8 @@ dense_matrix<T> dense_matrix<T>::mul_transpose(
         return out;
     }
 
-    dense_matrix bt = tile ? b.transpose_tile(tile) : b.transpose();
+    // dense_matrix bt = tile ? b.transpose_tile(tile) : b.transpose();
+    dense_matrix bt = b.transpose_tile(tile);
 
     const T* __restrict__ a_ptr = a.values.data();
     const T* __restrict__ bt_ptr = bt.values.data();
@@ -364,7 +398,7 @@ dense_matrix<T> dense_matrix<T>::mul_transpose(
             const T* __restrict__ bt_row = bt_ptr + j * k;
             T sum {};
             for (size_t p = 0; p < k; ++p) {
-                sum += a_row[p] * bt_row[p];
+                sum = sum + a_row[p] * bt_row[p];
             }
             c_row[j] = sum;
         }
@@ -391,9 +425,11 @@ dense_matrix<T> dense_matrix<T>::mul_block_ipj(
         return out;
     }
 
-    const T* a_ptr = a.values.data();
-    const T* b_ptr = b.values.data();
-    T* __restrict__ c_ptr = out.values.data();
+    const T* __restrict__ a_ptr
+        = std::assume_aligned<alignof(T)>(a.values.data());
+    const T* __restrict__ b_ptr
+        = std::assume_aligned<alignof(T)>(b.values.data());
+    T* __restrict__ c_ptr = std::assume_aligned<alignof(T)>(out.values.data());
 
     for (size_t i0 = 0; i0 < m; i0 += tile) {
         const size_t i1 = std::min(i0 + tile, m);
@@ -405,16 +441,33 @@ dense_matrix<T> dense_matrix<T>::mul_block_ipj(
 
                 for (size_t i = i0; i < i1; ++i) {
                     const size_t ai = i * k;
-                    T* c_tile = c_ptr + i * n + j0;
+                    T* __restrict__ c_tile
+                        = std::assume_aligned<alignof(T)>(c_ptr + i * n + j0);
 
                     for (size_t p = p0; p < p1; ++p) {
                         const T a_ip = a_ptr[ai + p];
-                        const T* b_tile = b_ptr + p * n + j0;
+                        const T* __restrict__ b_tile
+                            = std::assume_aligned<alignof(T)>(
+                                b_ptr + p * n + j0
+                            );
 
-                        T* c_acc = c_tile;
-                        const T* b_acc = b_tile;
-                        for (size_t off = 0; off < w; ++off) {
-                            *c_acc++ += a_ip * *b_acc++;
+                        T* __restrict__ c_acc = c_tile;
+                        const T* __restrict__ b_acc = b_tile;
+
+                        size_t off = 0;
+                        const size_t tail = w - (w % 4);
+                        for (; off < tail; off += 4) {
+                            c_acc[0] = c_acc[0] + a_ip * b_acc[0];
+                            c_acc[1] = c_acc[1] + a_ip * b_acc[1];
+                            c_acc[2] = c_acc[2] + a_ip * b_acc[2];
+                            c_acc[3] = c_acc[3] + a_ip * b_acc[3];
+                            c_acc += 4;
+                            b_acc += 4;
+                        }
+                        for (; off < w; ++off) {
+                            *c_acc = *c_acc + a_ip * *b_acc;
+                            ++c_acc;
+                            ++b_acc;
                         }
                     }
                 }
@@ -442,9 +495,11 @@ dense_matrix<T> dense_matrix<T>::mul_block_ijp(
         return out;
     }
 
-    const T* a_ptr = a.values.data();
-    const T* b_ptr = b.values.data();
-    T* __restrict__ c_ptr = out.values.data();
+    const T* __restrict__ a_ptr
+        = std::assume_aligned<alignof(T)>(a.values.data());
+    const T* __restrict__ b_ptr
+        = std::assume_aligned<alignof(T)>(b.values.data());
+    T* __restrict__ c_ptr = std::assume_aligned<alignof(T)>(out.values.data());
 
     for (size_t i0 = 0; i0 < m; i0 += tile) {
         const size_t i1 = std::min(i0 + tile, m);
@@ -461,11 +516,26 @@ dense_matrix<T> dense_matrix<T>::mul_block_ijp(
                         const T a_ip = a_ptr[ai + p];
                         const size_t bp = p * n;
 
-                        T* c_tile = c_ptr + ci + j0;
-                        const T* b_tile = b_ptr + bp + j0;
+                        T* __restrict__ c_tile
+                            = std::assume_aligned<alignof(T)>(c_ptr + ci + j0);
+                        const T* __restrict__ b_tile
+                            = std::assume_aligned<alignof(T)>(b_ptr + bp + j0);
 
-                        for (size_t j = j0; j < j1; ++j) {
-                            *c_tile++ += a_ip * *b_tile++;
+                        const size_t width = j1 - j0;
+                        size_t off = 0;
+                        const size_t tail = width - (width % 4);
+                        for (; off < tail; off += 4) {
+                            c_tile[0] = c_tile[0] + a_ip * b_tile[0];
+                            c_tile[1] = c_tile[1] + a_ip * b_tile[1];
+                            c_tile[2] = c_tile[2] + a_ip * b_tile[2];
+                            c_tile[3] = c_tile[3] + a_ip * b_tile[3];
+                            c_tile += 4;
+                            b_tile += 4;
+                        }
+                        for (; off < width; ++off) {
+                            *c_tile = *c_tile + a_ip * *b_tile;
+                            ++c_tile;
+                            ++b_tile;
                         }
                     }
                 }

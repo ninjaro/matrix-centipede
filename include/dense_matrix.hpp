@@ -72,6 +72,7 @@ public:
     add(const dense_matrix& a, const dense_matrix& b);
     [[nodiscard]] dense_matrix add(const dense_matrix& other) const;
     [[nodiscard]] dense_matrix operator+(const dense_matrix& other) const;
+    [[nodiscard]] dense_matrix& operator+=(const dense_matrix& rhs);
 
     [[nodiscard]] bool operator==(const dense_matrix& rhs) const noexcept;
 
