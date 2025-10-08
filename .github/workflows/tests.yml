@@ -10,6 +10,7 @@ on:
       - 'include/**/*.hpp'
       - 'tests/**/*.cpp'
       - 'java/**/*.java'
+      - 'java/**/*.kt'
 
 jobs:
   build-and-test:

@@ -35,7 +35,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("api")
-public final class DenseMatrixApiTest {
+public final class DenseMatrixApiJavaTest {
     private interface MatrixApi extends Library {
         MatrixApi INSTANCE = Native.load("matrix", MatrixApi.class);
 
