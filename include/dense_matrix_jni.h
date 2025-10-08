@@ -27,34 +27,61 @@
 #include "dense_matrix_api.h"
 #include <jni.h>
 
+/**
+ * @brief Utility macro that expands to the JNI export signature.
+ */
 #define wrap(type) JNIEXPORT type JNICALL
 
 extern "C" {
 
+/**
+ * @brief Allocates a native matrix and returns its handle to Java.
+ */
 wrap(jlong) Java_dm_DenseMatrixJni_nativeNew(
     JNIEnv* env, jclass c, jlong row_count, jlong col_count
 ) noexcept;
+/**
+ * @brief Releases the matrix associated with @p obj.
+ */
 wrap(void) Java_dm_DenseMatrixJni_nativeDelete(
     JNIEnv* env, jclass c, jlong obj
 ) noexcept;
+/**
+ * @brief Returns the number of rows held by the native matrix.
+ */
 wrap(jlong) Java_dm_DenseMatrixJni_nativeRows(
     JNIEnv* env, jclass c, jlong obj
 ) noexcept;
+/**
+ * @brief Returns the number of columns held by the native matrix.
+ */
 wrap(jlong) Java_dm_DenseMatrixJni_nativeCols(
     JNIEnv* env, jclass c, jlong obj
 ) noexcept;
+/**
+ * @brief Returns the total number of elements stored by the matrix.
+ */
 wrap(jlong) Java_dm_DenseMatrixJni_nativeSize(
     JNIEnv* env, jclass c, jlong obj
 ) noexcept;
 
+/**
+ * @brief Copies @p value_count entries from @p src into the matrix buffer.
+ */
 wrap(jint) Java_dm_DenseMatrixJni_nativeWrite(
     JNIEnv* env, jclass c, jlong obj, jdoubleArray src, jlong value_count
 ) noexcept;
 
+/**
+ * @brief Reads matrix data into the provided Java array.
+ */
 wrap(jint) Java_dm_DenseMatrixJni_nativeRead(
     JNIEnv* env, jclass c, jlong obj, jdoubleArray dst, jlong value_count
 ) noexcept;
 
+/**
+ * @brief Multiplies two native matrices and stores the resulting handle.
+ */
 wrap(jint) Java_dm_DenseMatrixJni_nativeMul(
     JNIEnv* env, jclass c, jlong lhs, jlong rhs, jlongArray out_obj
 ) noexcept;

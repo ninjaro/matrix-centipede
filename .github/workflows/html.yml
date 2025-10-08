@@ -59,8 +59,8 @@ jobs:
       - name: Run Java tests
         run: |
           bash scripts/java_test.sh
-          rm -rf java-cov
-          mv java/build/reports java-cov
+          rm -rf java-report
+          mv java/build/reports/tests/test java-report
 
 #      - name: Upload results to Codecov
 #        uses: codecov/codecov-action@v5

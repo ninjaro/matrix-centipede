@@ -1,4 +1,4 @@
-![matrix-centipede-Light](assets/lbanner.svg#gh-light-mode-only)![matrix-centipede-Dark](assets/dbanner.svg#gh-dark-mode-only)
+![MC Logo Light](assets/lbanner.svg#gh-light-mode-only)![MC Logo Dark](assets/dbanner.svg#gh-dark-mode-only)
 
 [![version](https://img.shields.io/github/v/release/ninjaro/matrix-centipede?include_prereleases)](https://github.com/ninjaro/matrix-centipede/releases/latest)
 [![Checks](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml/badge.svg)](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml)
@@ -31,8 +31,8 @@
     * **llvm-cov + llvm-profdata** (Clang) or **gcovr** (GCC): for coverage reports (`ENABLE_COVERAGE=ON`)
 * For the Java/Kotlin bindings:
 
-  * **JDK 17** (configured via Gradle toolchains)
-  * **Gradle 7.6+** (or an IDE with Gradle integration such as IntelliJ IDEA)
+    * **JDK 17** (configured via Gradle toolchains)
+    * **Gradle 7.6+** (or an IDE with Gradle integration such as IntelliJ IDEA)
 
 ## Project Scripts
 
@@ -57,7 +57,8 @@ The `scripts/` directory contains utility helpers for common project workflows:
 ## Documentation and Contributing
 
 For detailed documentation, see the [Documentation](https://ninjaro.github.io/matrix-centipede/doc/) and for the latest
-coverage report, see [Coverage](https://ninjaro.github.io/matrix-centipede/cov/).
+coverage report, see [Coverage](https://ninjaro.github.io/matrix-centipede/cov/)
+and [Java-Report](https://ninjaro.github.io/matrix-centipede/java-report/).
 
 ## Security Policy
 
