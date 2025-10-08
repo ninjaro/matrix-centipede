@@ -5,6 +5,7 @@ on:
     branches:
       - master
     paths:
+      - '.github/workflows/html.yml'
       - 'src/**/*.cpp'
       - 'include/**/*.hpp'
       - 'tests/**/*.cpp'
@@ -71,12 +72,45 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
+  java-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Run Java tests
+        run: bash scripts/java_test.sh
+
+      - name: Prepare Java reports artifact
+        run: |
+          rm -rf java-cov
+          mv java/build/reports java-cov
+          rm -rf java/build
+
+      - name: Upload Java test reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-test-reports
+          path: java-cov
+
   deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    needs: build
+    needs:
+      - build
+      - java-tests
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

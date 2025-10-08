@@ -5,6 +5,7 @@ on:
     branches:
       - master
     paths:
+      - '.github/workflows/tests.yml'
       - 'src/**/*.cpp'
       - 'include/**/*.hpp'
       - 'tests/**/*.cpp'
@@ -44,16 +45,22 @@ jobs:
           clang-format-version: '20'
           check-path: '.'
 
+
   java-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Java
+      - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: '21'
 
-      - name: Run Java native API tests
-        run: ./scripts/java_test.sh
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Run Java tests
+        run: bash scripts/java_test.sh

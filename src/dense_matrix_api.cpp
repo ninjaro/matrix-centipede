@@ -32,6 +32,22 @@ safe_call(size_t (dm_double::*getter)() const noexcept, dm_ptr obj) noexcept {
     return (obj->matrix.*getter)();
 }
 
+dm_status translate_exception() noexcept {
+    try {
+        throw;
+    } catch (const std::bad_alloc&) {
+        return bad_alloc;
+    } catch (const std::overflow_error&) {
+        return bad_size;
+    } catch (const std::invalid_argument&) {
+        return bad_size;
+    } catch (const std::exception&) {
+        return internal;
+    } catch (...) {
+        return internal;
+    }
+}
+
 extern "C" {
 dm_ptr dm_new_empty() noexcept {
     try {
@@ -64,10 +80,7 @@ size_t dm_cols(dm_ptr obj) noexcept { return safe_call(&dm_double::cols, obj); }
 size_t dm_size(dm_ptr obj) noexcept { return safe_call(&dm_double::size, obj); }
 
 dm_status dm_write(dm_ptr obj, const double* src, size_t value_count) noexcept {
-    if (obj == nullptr) {
-        return null;
-    }
-    if (src == nullptr && value_count != 0) {
+    if (obj == nullptr || (src == nullptr && value_count != 0)) {
         return null;
     }
 
@@ -81,20 +94,13 @@ dm_status dm_write(dm_ptr obj, const double* src, size_t value_count) noexcept {
             std::copy_n(src, value_count, matrix.data());
         }
         return ok;
-    } catch (const std::bad_alloc&) {
-        return bad_alloc;
-    } catch (const std::exception&) {
-        return internal;
     } catch (...) {
-        return internal;
+        return translate_exception();
     }
 }
 
 dm_status dm_read(dm_ptr obj, double* dst, size_t value_count) noexcept {
-    if (obj == nullptr) {
-        return null;
-    }
-    if (dst == nullptr && value_count != 0) {
+    if (obj == nullptr || (dst == nullptr && value_count != 0)) {
         return null;
     }
 
@@ -108,24 +114,16 @@ dm_status dm_read(dm_ptr obj, double* dst, size_t value_count) noexcept {
             std::copy_n(matrix.data(), value_count, dst);
         }
         return ok;
-    } catch (const std::bad_alloc&) {
-        return bad_alloc;
-    } catch (const std::exception&) {
-        return internal;
     } catch (...) {
-        return internal;
+        return translate_exception();
     }
 }
 
 dm_status dm_mul(dm_ptr lhs, dm_ptr rhs, dm_ptr* out_obj) noexcept {
-    if (out_obj == nullptr) {
+    if (out_obj == nullptr || lhs == nullptr || rhs == nullptr) {
         return null;
     }
     *out_obj = nullptr;
-
-    if (lhs == nullptr || rhs == nullptr) {
-        return null;
-    }
 
     try {
         const dm_double& left_matrix = lhs->matrix;
@@ -139,16 +137,8 @@ dm_status dm_mul(dm_ptr lhs, dm_ptr rhs, dm_ptr* out_obj) noexcept {
         auto* obj = new dm_storage { std::move(product) };
         *out_obj = obj;
         return ok;
-    } catch (const std::bad_alloc&) {
-        return bad_alloc;
-    } catch (const std::overflow_error&) {
-        return bad_size;
-    } catch (const std::invalid_argument&) {
-        return bad_size;
-    } catch (const std::exception&) {
-        return internal;
     } catch (...) {
-        return internal;
+        return translate_exception();
     }
 }
 } // extern "C"
