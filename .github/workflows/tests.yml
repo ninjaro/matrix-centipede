@@ -8,6 +8,7 @@ on:
       - 'src/**/*.cpp'
       - 'include/**/*.hpp'
       - 'tests/**/*.cpp'
+      - 'java/**/*.java'
 
 jobs:
   build-and-test:
@@ -42,3 +43,17 @@ jobs:
         with:
           clang-format-version: '20'
           check-path: '.'
+
+  java-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Run Java native API tests
+        run: ./scripts/java_test.sh

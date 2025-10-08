@@ -151,4 +151,4 @@ dm_status dm_mul(dm_ptr lhs, dm_ptr rhs, dm_ptr* out_obj) noexcept {
         return internal;
     }
 }
-}
+} // extern "C"

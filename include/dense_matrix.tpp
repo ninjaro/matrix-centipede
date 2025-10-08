@@ -41,6 +41,8 @@ safe_count(const size_t rows, const size_t cols) {
     return rows * cols;
 }
 
+template <matmul_scalar T> dense_matrix<T>::dense_matrix() noexcept = default;
+
 template <matmul_scalar T>
 dense_matrix<T>::dense_matrix(const size_t rows, const size_t cols)
     : row_count(rows)
@@ -82,6 +84,20 @@ dense_matrix<T>::dense_matrix(
     }
     assert(values.size() == rows * cols);
 }
+
+template <matmul_scalar T>
+dense_matrix<T>::dense_matrix(const dense_matrix&) = default;
+
+template <matmul_scalar T>
+dense_matrix<T>::dense_matrix(dense_matrix&&) noexcept = default;
+
+template <matmul_scalar T>
+dense_matrix<T>& dense_matrix<T>::operator=(const dense_matrix&) = default;
+
+template <matmul_scalar T>
+dense_matrix<T>& dense_matrix<T>::operator=(dense_matrix&&) noexcept = default;
+
+template <matmul_scalar T> dense_matrix<T>::~dense_matrix() = default;
 
 template <matmul_scalar T> size_t dense_matrix<T>::rows() const noexcept {
     return row_count;

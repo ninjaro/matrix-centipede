@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.28)
 project(matrix VERSION 1.0.0 LANGUAGES CXX)
 
 option(BUILD_TESTS "Build unit tests (GTest)" ON)
+option(BUILD_API "Build API shared library" ON)
+option(BUILD_JNI "Build JNI shared library" ON)
 option(BUILD_BENCHMARKS "Build benches if Google Benchmark is present" ON)
 option(COVERAGE "Enable code coverage instrumentation (tests only)" OFF)
 
@@ -39,7 +41,6 @@ target_sources(matrix INTERFACE
         ${CMAKE_CURRENT_SOURCE_DIR}/include/dense_matrix.tpp
 )
 
-
 add_library(matrix_api SHARED src/dense_matrix_api.cpp)
 set_target_properties(matrix_api PROPERTIES
         OUTPUT_NAME matrix
@@ -52,6 +53,29 @@ target_include_directories(matrix_api
 )
 target_link_libraries(matrix_api PRIVATE matrix)
 target_compile_definitions(matrix_api PRIVATE MC_DENSE_MATRIX_EXPORTS)
+
+find_package(JNI QUIET)
+if (BUILD_JNI)
+    if (NOT JNI_FOUND)
+        message(FATAL_ERROR "JNI not found but BUILD_JNI is enabled")
+    endif ()
+
+    add_library(matrix_jni SHARED src/dense_matrix_jni.cpp)
+    set_target_properties(matrix_jni PROPERTIES
+            OUTPUT_NAME matrix_jni
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/jni
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/jni
+    )
+    target_include_directories(matrix_jni
+            PUBLIC
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${JNI_INCLUDE_DIRS}
+    )
+    target_link_libraries(matrix_jni PRIVATE matrix_api ${JNI_LIBRARIES})
+else ()
+    add_library(matrix_jni INTERFACE)
+    target_include_directories(matrix_jni INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/include)
+endif ()
 
 find_package(Eigen3 3.3 QUIET)
 add_library(dep_eigen INTERFACE)
@@ -80,12 +104,22 @@ if (BUILD_TESTS)
     enable_testing()
     find_package(GTest QUIET)
     if (GTest_FOUND)
-        add_executable(unit_tests
-                tests/dense_matrix_tests.cpp
-                tests/dense_matrix_api_tests.cpp
-                tests/dense_matrix_eigen_tests.cpp
+        set(unit_test_sources
+                tests/dense_matrix_tests.cpp tests/dense_matrix_eigen_tests.cpp
         )
-        target_link_libraries(unit_tests PRIVATE matrix matrix_api dep_eigen dep_coverage GTest::gtest_main)
+        if (BUILD_API)
+            list(APPEND unit_test_sources
+                    src/dense_matrix_api.cpp tests/dense_matrix_api_tests.cpp
+            )
+        endif ()
+        if (BUILD_JNI)
+            list(APPEND unit_test_sources
+                    src/dense_matrix_jni.cpp tests/dense_matrix_jni_tests.cpp
+            )
+        endif ()
+
+        add_executable(unit_tests ${unit_test_sources})
+        target_link_libraries(unit_tests PRIVATE matrix matrix_api matrix_jni dep_eigen dep_coverage GTest::gtest_main)
         add_test(NAME unit_tests COMMAND unit_tests)
     endif ()
 endif ()
@@ -100,6 +134,7 @@ endif ()
 
 if (COVERAGE)
     set(COVERAGE_DIR "${CMAKE_BINARY_DIR}/../cov")
+    set(COVERAGE_IGNORE_REGEX ".*/tests/.*|.*/usr/lib/jvm/default/include/.*")
 
     if (TARGET unit_tests)
         add_custom_command(
@@ -122,7 +157,7 @@ if (COVERAGE)
                     -instr-profile=${PROFDATA_FILE}
                     -format=html
                     -output-dir=${COVERAGE_DIR}
-                    -ignore-filename-regex='.*/tests/.*'
+                    -ignore-filename-regex=${COVERAGE_IGNORE_REGEX}
                     -show-branches=count
                     -show-line-counts
                     -show-regions
@@ -133,7 +168,7 @@ if (COVERAGE)
                     COMMAND ${LLVM_COV} export $<TARGET_FILE:unit_tests>
                     -instr-profile=${PROFDATA_FILE}
                     -format=lcov
-                    -ignore-filename-regex='.*/tests/.*' > ${CMAKE_BINARY_DIR}/coverage.info
+                    -ignore-filename-regex=${COVERAGE_IGNORE_REGEX} > ${CMAKE_BINARY_DIR}/coverage.info
                     DEPENDS unit_tests
                     VERBATIM
             )
@@ -145,6 +180,7 @@ if (COVERAGE)
                     COMMAND ${CMAKE_COMMAND} --build . --target unit_tests
                     COMMAND unit_tests
                     COMMAND ${LCOV} --capture --directory . --output-file coverage.info
+                    COMMAND ${LCOV} --remove coverage.info '*/tests/*' '/usr/lib/jvm/default/include/*' --output-file coverage.info
                     COMMAND ${GENHTML} coverage.info --output-directory coverage_report
                     DEPENDS unit_tests
             )

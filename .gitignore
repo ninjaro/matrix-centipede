@@ -43,8 +43,10 @@ cmake-build-debug*/
 build/
 doc/
 cov/
+.gradle/
 
 CMakeLists.txt.user
 CMakeLists.txt.user.*
 
 todo
+cov.log
