@@ -40,15 +40,15 @@ concept matmul_scalar = std::default_initializable<T>
 
 template <matmul_scalar T = double> class dense_matrix {
 public:
-    dense_matrix() = default;
+    dense_matrix() noexcept;
     dense_matrix(size_t rows, size_t cols);
     dense_matrix(size_t rows, size_t cols, const T* data);
     dense_matrix(size_t rows, size_t cols, std::initializer_list<T> init);
-    dense_matrix(const dense_matrix&) = default;
-    dense_matrix(dense_matrix&&) noexcept = default;
-    dense_matrix& operator=(const dense_matrix&) = default;
-    dense_matrix& operator=(dense_matrix&&) noexcept = default;
-    ~dense_matrix() = default;
+    dense_matrix(const dense_matrix&);
+    dense_matrix(dense_matrix&&) noexcept;
+    dense_matrix& operator=(const dense_matrix&);
+    dense_matrix& operator=(dense_matrix&&) noexcept;
+    ~dense_matrix();
 
     [[nodiscard]] size_t rows() const noexcept;
     [[nodiscard]] size_t cols() const noexcept;

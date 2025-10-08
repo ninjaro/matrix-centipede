@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'net.java.dev.jna:jna:5.14.0'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform { options ->
+        def includeTagsValue = project.findProperty('includeTags')?.toString()
+        if (includeTagsValue) {
+            def tags = includeTagsValue.split(',')
+                    .collect { value -> value.trim() }
+                    .findAll { value -> !value.isEmpty() }
+            if (!tags.isEmpty()) {
+                options.includeTags(tags as String[])
+            }
+        }
+    }
+
+    def nativeLibraryPathValue = project.findProperty('nativeLibraryPath')?.toString()
+    if (nativeLibraryPathValue && !nativeLibraryPathValue.isBlank()) {
+        systemProperty 'jna.library.path', nativeLibraryPathValue
+        systemProperty 'java.library.path', nativeLibraryPathValue
+    }
+}

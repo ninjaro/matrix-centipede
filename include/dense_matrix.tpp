@@ -41,6 +41,8 @@ safe_count(const size_t rows, const size_t cols) {
     return rows * cols;
 }
 
+template <matmul_scalar T> dense_matrix<T>::dense_matrix() noexcept = default;
+
 template <matmul_scalar T>
 dense_matrix<T>::dense_matrix(const size_t rows, const size_t cols)
     : row_count(rows)
@@ -82,6 +84,20 @@ dense_matrix<T>::dense_matrix(
     }
     assert(values.size() == rows * cols);
 }
+
+template <matmul_scalar T>
+dense_matrix<T>::dense_matrix(const dense_matrix&) = default;
+
+template <matmul_scalar T>
+dense_matrix<T>::dense_matrix(dense_matrix&&) noexcept = default;
+
+template <matmul_scalar T>
+dense_matrix<T>& dense_matrix<T>::operator=(const dense_matrix&) = default;
+
+template <matmul_scalar T>
+dense_matrix<T>& dense_matrix<T>::operator=(dense_matrix&&) noexcept = default;
+
+template <matmul_scalar T> dense_matrix<T>::~dense_matrix() = default;
 
 template <matmul_scalar T> size_t dense_matrix<T>::rows() const noexcept {
     return row_count;
@@ -372,7 +388,7 @@ dense_matrix<T>::mul_native(const dense_matrix& a, const dense_matrix& b) {
 
 template <matmul_scalar T>
 dense_matrix<T> dense_matrix<T>::mul_transpose(
-    const dense_matrix& a, const dense_matrix& b, const size_t tile
+    const dense_matrix& a, const dense_matrix& b, size_t tile
 ) {
     const size_t m = a.row_count;
     const size_t k = a.col_count;
@@ -455,8 +471,8 @@ dense_matrix<T> dense_matrix<T>::mul_block_ipj(
                         const T* __restrict__ b_acc = b_tile;
 
                         size_t off = 0;
-                        const size_t tail = w - (w % 4);
-                        for (; off < tail; off += 4) {
+                        const size_t unrolled_end = w - (w % 4);
+                        for (; off < unrolled_end; off += 4) {
                             c_acc[0] = c_acc[0] + a_ip * b_acc[0];
                             c_acc[1] = c_acc[1] + a_ip * b_acc[1];
                             c_acc[2] = c_acc[2] + a_ip * b_acc[2];
@@ -523,8 +539,8 @@ dense_matrix<T> dense_matrix<T>::mul_block_ijp(
 
                         const size_t width = j1 - j0;
                         size_t off = 0;
-                        const size_t tail = width - (width % 4);
-                        for (; off < tail; off += 4) {
+                        const size_t unrolled_end = width - (width % 4);
+                        for (; off < unrolled_end; off += 4) {
                             c_tile[0] = c_tile[0] + a_ip * b_tile[0];
                             c_tile[1] = c_tile[1] + a_ip * b_tile[1];
                             c_tile[2] = c_tile[2] + a_ip * b_tile[2];

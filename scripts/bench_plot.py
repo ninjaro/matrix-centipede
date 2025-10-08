@@ -45,10 +45,10 @@ def parse_log(path: str):
     return collapsed
 
 def main(argv):
-    if len(argv) < 2:
+    if len(argv) < 3:
         return 0
     in_path = argv[1]
-    out_path = 'bench_plot.png'
+    out_path = argv[2]
 
     data = parse_log(in_path)
 
