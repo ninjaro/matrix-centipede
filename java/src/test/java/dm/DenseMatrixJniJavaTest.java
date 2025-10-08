@@ -31,7 +31,7 @@ import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @Tag("jni")
-public final class DenseMatrixJniTest {
+public final class DenseMatrixJniJavaTest {
     private static final int STATUS_OK = 0;
 
     @Test
