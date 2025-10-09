@@ -21,44 +21,38 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-#include "dense_matrix_api.h"
-#include <gtest/gtest.h>
 #include <numeric>
 
-TEST(DenseMatrixApiTest, CreateMatrixTest) {
-    auto* obj = dm_new(2, 3);
-    ASSERT_NE(obj, nullptr);
+#include "dense_matrix.hpp"
+#include <gtest/gtest.h>
 
-    EXPECT_EQ(dm_rows(obj), 2u);
-    EXPECT_EQ(dm_cols(obj), 3u);
-    EXPECT_EQ(dm_size(obj), 6u);
+using dm::dense_matrix;
+using dm::mul_algo;
 
-    dm_delete(obj);
-}
+typedef dense_matrix<int> dm_int;
 
-TEST(DenseMatrixApiTest, MultiplyTest) {
-    auto* lhs = dm_new(2, 3);
-    auto* rhs = dm_new(3, 2);
-    ASSERT_NE(lhs, nullptr);
-    ASSERT_NE(rhs, nullptr);
+TEST(DenseMatrix, TensorMultiply) {
+    dm_int a00(2, 3, { 1, 1, 2, 3, 5, 8 });
+    dm_int a01(2, 3, { 1, 2, 3, 4, 5, 6 });
+    dm_int b00(3, 4, { 1, 3, 5, 8, 10, 14, 16, 20, 23, 27, 29, 35 });
+    dm_int b10(3, 4, { 1, 4, 8, 8, 6, 2, 8, 7, 7, 2, 9, 7 });
 
-    std::array<double, 12> data {};
-    std::iota(data.begin(), data.end(), 1.0);
+    dense_matrix<dm_int> a(1, 2, { a00, a01 });
+    dense_matrix<dm_int> b(2, 1, { b00, b10 });
 
-    ASSERT_EQ(dm_write(lhs, data.data(), 6), ok);
-    ASSERT_EQ(dm_write(rhs, data.data() + 6, 6), ok);
+    auto c_native = dense_matrix<dm_int>::multiply(a, b, mul_algo::native);
+    auto c_transp
+        = dense_matrix<dm_int>::multiply(a, b, mul_algo::transpose, 8);
+    auto c_ijp = dense_matrix<dm_int>::multiply(a, b, mul_algo::block_ijp, 8);
+    auto c_ipj = dense_matrix<dm_int>::multiply(a, b, mul_algo::block_ipj, 8);
 
-    dm_storage* out = nullptr;
-    ASSERT_EQ(dm_mul(lhs, rhs, &out), ok);
-    ASSERT_NE(out, nullptr);
+    dm_int expected = (a00 * b00) + (a01 * b10);
 
-    std::array<double, 4> actual {};
-    ASSERT_EQ(dm_read(out, actual.data(), actual.size()), ok);
+    ASSERT_EQ(c_native.rows(), 1u);
+    ASSERT_EQ(c_native.cols(), 1u);
 
-    const std::array<double, 4> expected { 58.0, 64.0, 139.0, 154.0 };
-    EXPECT_EQ(actual, expected);
-
-    dm_delete(out);
-    dm_delete(lhs);
-    dm_delete(rhs);
+    EXPECT_TRUE(c_native.at(0, 0) == expected);
+    EXPECT_TRUE(c_transp.at(0, 0) == expected);
+    EXPECT_TRUE(c_ijp.at(0, 0) == expected);
+    EXPECT_TRUE(c_ipj.at(0, 0) == expected);
 }

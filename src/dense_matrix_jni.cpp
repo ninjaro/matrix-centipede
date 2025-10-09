@@ -51,6 +51,14 @@ fits_in_array(JNIEnv* env, jarray array, jlong count) noexcept {
 
 extern "C" {
 
+wrap(jlong) Java_dm_DenseMatrixJni_nativeNewEmpty(
+    JNIEnv* env, jclass
+) noexcept {
+    (void)env;
+    dm_ptr obj = dm_new_empty();
+    return to_handle(obj);
+}
+
 wrap(jlong) Java_dm_DenseMatrixJni_nativeNew(
     JNIEnv* env, jclass, jlong row_count, jlong col_count
 ) noexcept {
@@ -151,6 +159,9 @@ wrap(jint) Java_dm_DenseMatrixJni_nativeRead(
 wrap(jint) Java_dm_DenseMatrixJni_nativeMul(
     JNIEnv* env, jclass, jlong lhs, jlong rhs, jlongArray out_obj
 ) noexcept {
+    if (env == nullptr) {
+        return to_jint(null);
+    }
     if (out_obj == nullptr) {
         return to_jint(null);
     }
@@ -158,9 +169,16 @@ wrap(jint) Java_dm_DenseMatrixJni_nativeMul(
         return to_jint(bad_size);
     }
 
-    dm_ptr result = nullptr;
-    dm_status status = dm_mul(from_handle(lhs), from_handle(rhs), &result);
+    dm_ptr lhs_ptr = from_handle(lhs);
+    dm_ptr rhs_ptr = from_handle(rhs);
+    if (lhs_ptr == nullptr || rhs_ptr == nullptr) {
+        const jlong zero = 0;
+        env->SetLongArrayRegion(out_obj, 0, 1, &zero);
+        return to_jint(null);
+    }
 
+    dm_ptr result = nullptr;
+    dm_status status = dm_mul(lhs_ptr, rhs_ptr, &result);
     jlong handle = (status == ok) ? to_handle(result) : 0;
     env->SetLongArrayRegion(out_obj, 0, 1, &handle);
     return to_jint(status);

@@ -24,6 +24,7 @@
 
 #ifndef MATRIX_CENTIPEDE_DENSE_MATRIX_HPP
 #define MATRIX_CENTIPEDE_DENSE_MATRIX_HPP
+#include <span>
 #include <vector>
 
 namespace dm {
@@ -88,6 +89,14 @@ public:
      *             row-major.
      */
     dense_matrix(size_t rows, size_t cols, const T* data);
+    /**
+     * @brief Constructs a matrix from a span.
+     *
+     * @param rows Number of rows.
+     * @param cols Number of columns.
+     * @param src Values in row-major order whose size must match rows*cols.
+     */
+    dense_matrix(size_t rows, size_t cols, std::span<const T> src);
     /**
      * @brief Constructs a matrix from an initializer list.
      *

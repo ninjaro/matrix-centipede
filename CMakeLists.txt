@@ -105,22 +105,28 @@ if (BUILD_TESTS)
     find_package(GTest QUIET)
     if (GTest_FOUND)
         set(unit_test_sources
-                tests/dense_matrix_tests.cpp tests/dense_matrix_eigen_tests.cpp
+                tests/dense_matrix_int_tests.cpp
+                tests/dense_matrix_double_tests.cpp
+                tests/dense_matrix_tensor_tests.cpp
+                tests/dense_matrix_eigen_tests.cpp
         )
         if (BUILD_API)
             list(APPEND unit_test_sources
-                    src/dense_matrix_api.cpp tests/dense_matrix_api_tests.cpp
+                    src/dense_matrix_api.cpp tests/api/dense_matrix_api_tests.cpp
             )
         endif ()
         if (BUILD_JNI)
             list(APPEND unit_test_sources
-                    src/dense_matrix_jni.cpp tests/dense_matrix_jni_tests.cpp
+                    src/dense_matrix_jni.cpp tests/api/dense_matrix_jni_tests.cpp
             )
         endif ()
 
         add_executable(unit_tests ${unit_test_sources})
         target_link_libraries(unit_tests PRIVATE matrix matrix_api matrix_jni dep_eigen dep_coverage GTest::gtest_main)
         add_test(NAME unit_tests COMMAND unit_tests)
+        if (BUILD_JNI)
+            target_link_libraries(unit_tests PRIVATE ${JNI_LIBRARIES})
+        endif ()
     endif ()
 endif ()
 
@@ -134,7 +140,7 @@ endif ()
 
 if (COVERAGE)
     set(COVERAGE_DIR "${CMAKE_BINARY_DIR}/../cov")
-    set(COVERAGE_IGNORE_REGEX ".*/tests/.*|.*/usr/lib/jvm/default/include/.*")
+    set(COVERAGE_IGNORE_REGEX ".*/tests/.*|.*/usr/lib/.*")
 
     if (TARGET unit_tests)
         add_custom_command(
@@ -159,6 +165,7 @@ if (COVERAGE)
                     -output-dir=${COVERAGE_DIR}
                     -ignore-filename-regex=${COVERAGE_IGNORE_REGEX}
                     -show-branches=count
+                    -Xdemangler=c++filt
                     -show-line-counts
                     -show-regions
                     -show-instantiations

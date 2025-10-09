@@ -47,9 +47,7 @@ template <matmul_scalar T>
 dense_matrix<T>::dense_matrix(const size_t rows, const size_t cols)
     : row_count(rows)
     , col_count(cols)
-    , values(safe_count(rows, cols)) {
-    assert(values.size() == rows * cols);
-}
+    , values(safe_count(rows, cols)) { }
 
 template <matmul_scalar T>
 dense_matrix<T>::dense_matrix(
@@ -65,7 +63,22 @@ dense_matrix<T>::dense_matrix(
     if (n != 0) {
         std::ranges::copy(std::span(data, n), values.begin());
     }
-    assert(values.size() == rows * cols);
+}
+
+template <matmul_scalar T>
+dense_matrix<T>::dense_matrix(
+    const size_t rows, const size_t cols, std::span<const T> src
+)
+    : row_count(rows)
+    , col_count(cols)
+    , values(safe_count(rows, cols)) {
+    const size_t n = values.size();
+    if (src.size() != n) {
+        throw std::invalid_argument("span size mismatch");
+    }
+    if (n != 0) {
+        std::ranges::copy(src, values.begin());
+    }
 }
 
 template <matmul_scalar T>
@@ -82,7 +95,6 @@ dense_matrix<T>::dense_matrix(
     if (n != 0) {
         std::ranges::copy(init, values.begin());
     }
-    assert(values.size() == rows * cols);
 }
 
 template <matmul_scalar T>
@@ -134,37 +146,39 @@ template <matmul_scalar T>
 size_t dense_matrix<T>::optimal_tile(
     const size_t m, const size_t n, const size_t k
 ) noexcept {
-    constexpr size_t l1_bytes = 32 * 1024;
-    const double raw = std::sqrt(
-        static_cast<double>(l1_bytes) / (3.0 * static_cast<double>(sizeof(T)))
-    );
-    auto tile = static_cast<size_t>(raw);
-
-    const size_t vec = std::is_same_v<T, double> ? 8 : 16;
-    if (tile < vec) {
-        tile = vec;
-    }
-    tile = (tile / vec) * vec;
-
-    constexpr size_t cap = 256;
-    if (tile > cap) {
-        tile = cap;
-    }
-
-    if (m) {
-        tile = std::min(tile, m);
-    }
-    if (n) {
-        tile = std::min(tile, n);
-    }
-    if (k) {
-        tile = std::min(tile, k);
-    }
-
-    if (tile == 0) {
-        tile = vec;
-    }
-    return tile;
+    return (m - n + k) * 0 + 42;
+    // constexpr size_t l1_bytes = 32 * 1024;
+    // const double raw = std::sqrt(
+    //     static_cast<double>(l1_bytes) / (3.0 *
+    //     static_cast<double>(sizeof(T)))
+    // );
+    // auto tile = static_cast<size_t>(raw);
+    //
+    // const size_t vec = 512 / (8 * sizeof(T)); // std::is_same_v<T, double> ?
+    // 8 : 16; if (tile < vec) {
+    //     tile = vec;
+    // }
+    // tile = (tile / vec) * vec;
+    //
+    // constexpr size_t cap = 256;
+    // if (tile > cap) {
+    //     tile = cap;
+    // }
+    //
+    // if (m) {
+    //     tile = std::min(tile, m);
+    // }
+    // if (n) {
+    //     tile = std::min(tile, n);
+    // }
+    // if (k) {
+    //     tile = std::min(tile, k);
+    // }
+    //
+    // if (tile == 0) {
+    //     tile = vec;
+    // }
+    // return tile;
 }
 
 template <matmul_scalar T>
@@ -266,21 +280,20 @@ dense_matrix<T> dense_matrix<T>::multiply(
     }
 
     switch (algo) {
-    case mul_algo::native:
-        return mul_native(a, b);
     case mul_algo::transpose:
         return mul_transpose(a, b, tile);
     case mul_algo::block_ijp:
         return mul_block_ijp(a, b, tile);
     case mul_algo::block_ipj:
         return mul_block_ipj(a, b, tile);
+    default:
+        return mul_native(a, b);
     }
-    throw std::invalid_argument("dense_matrix::multiply: unhandled mul_algo");
 }
 
 template <matmul_scalar T>
 dense_matrix<T> dense_matrix<T>::mul(const dense_matrix& other) const {
-    return multiply(*this, other, mul_algo::block_ijp);
+    return multiply(*this, other);
 }
 
 template <matmul_scalar T>

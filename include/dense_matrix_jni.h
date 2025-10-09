@@ -33,7 +33,12 @@
 #define wrap(type) JNIEXPORT type JNICALL
 
 extern "C" {
-
+/**
+ * @brief Allocates an empty storage object and returns its handle to Java.
+ */
+wrap(jlong) Java_dm_DenseMatrixJni_nativeNewEmpty(
+    JNIEnv* env, jclass c
+) noexcept;
 /**
  * @brief Allocates a native matrix and returns its handle to Java.
  */
