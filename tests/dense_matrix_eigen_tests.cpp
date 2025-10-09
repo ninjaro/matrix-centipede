@@ -31,6 +31,9 @@
 using dm::dense_matrix;
 using dm::mul_algo;
 
+typedef dense_matrix<int> dm_int;
+typedef dense_matrix<double> dm_double;
+
 template <typename T>
 using ematrix
     = Eigen::Matrix<T, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>;
@@ -62,14 +65,10 @@ TEST(DenseMatrix_Eigen, Double_CompareWithEigen_isApprox) {
         auto ad = eigen_to_dense(a);
         auto bd = eigen_to_dense(b);
 
-        auto c_native
-            = dense_matrix<double>::multiply(ad, bd, mul_algo::native);
-        auto c_transp
-            = dense_matrix<double>::multiply(ad, bd, mul_algo::transpose, 16);
-        auto c_ijp
-            = dense_matrix<double>::multiply(ad, bd, mul_algo::block_ijp, 16);
-        auto c_ipj
-            = dense_matrix<double>::multiply(ad, bd, mul_algo::block_ipj, 16);
+        auto c_native = dm_double::multiply(ad, bd, mul_algo::native);
+        auto c_transp = dm_double::multiply(ad, bd, mul_algo::transpose, 16);
+        auto c_ijp = dm_double::multiply(ad, bd, mul_algo::block_ijp, 16);
+        auto c_ipj = dm_double::multiply(ad, bd, mul_algo::block_ipj, 16);
 
         auto e_native = dense_to_eigen_copy(c_native);
         auto e_transp = dense_to_eigen_copy(c_transp);
@@ -102,10 +101,10 @@ TEST(DenseMatrix_Eigen, Int_ExactEquality_AgainstEigen) {
     auto bd = eigen_to_dense(b);
     auto c_ref = eigen_to_dense(c);
 
-    auto c_native = dense_matrix<int>::multiply(ad, bd, mul_algo::native);
-    auto c_transp = dense_matrix<int>::multiply(ad, bd, mul_algo::transpose, 8);
-    auto c_ijp = dense_matrix<int>::multiply(ad, bd, mul_algo::block_ijp, 8);
-    auto c_ipj = dense_matrix<int>::multiply(ad, bd, mul_algo::block_ipj, 8);
+    auto c_native = dm_int::multiply(ad, bd, mul_algo::native);
+    auto c_transp = dm_int::multiply(ad, bd, mul_algo::transpose, 8);
+    auto c_ijp = dm_int::multiply(ad, bd, mul_algo::block_ijp, 8);
+    auto c_ipj = dm_int::multiply(ad, bd, mul_algo::block_ipj, 8);
 
     EXPECT_TRUE(c_native == c_ref);
     EXPECT_TRUE(c_transp == c_ref);

@@ -28,7 +28,7 @@
     * **Google Benchmark**: for benchmarks (`BUILD_BENCHMARKS=ON`)
     * **Eigen3**: for extra test/bench comparisons if found
     * **Python 3 + matplotlib**: for plotting benchmark results via `scripts/bench_plot.py`
-    * **llvm-cov + llvm-profdata** (Clang) or **gcovr** (GCC): for coverage reports (`ENABLE_COVERAGE=ON`)
+    * **llvm-cov + llvm-profdata** (Clang) or **gcovr** (GCC): for coverage reports (`COVERAGE=ON`)
 * For the Java/Kotlin bindings:
 
     * **JDK 17** (configured via Gradle toolchains)

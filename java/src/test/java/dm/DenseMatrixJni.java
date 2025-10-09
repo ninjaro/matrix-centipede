@@ -32,6 +32,7 @@ final class DenseMatrixJni {
         // Utility class
     }
 
+    private static native long nativeNewEmpty();
     private static native long nativeNew(long rows, long cols);
     private static native void nativeDelete(long handle);
     private static native long nativeRows(long handle);
@@ -41,14 +42,16 @@ final class DenseMatrixJni {
     private static native int nativeRead(long handle, double[] dst, long valueCount);
     private static native int nativeMul(long lhs, long rhs, long[] outHandle);
 
+    static long newEmpty() {
+        return nativeNewEmpty();
+    }
+
     static long newMatrix(long rows, long cols) {
         return nativeNew(rows, cols);
     }
 
     static void delete(long handle) {
-        if (handle != 0L) {
-            nativeDelete(handle);
-        }
+        nativeDelete(handle);
     }
 
     static long rows(long handle) {
@@ -63,18 +66,15 @@ final class DenseMatrixJni {
         return nativeSize(handle);
     }
 
-    static int write(long handle, double[] values) {
-        return nativeWrite(handle, values, values.length);
+    static int write(long handle, double[] values, long length) {
+        return nativeWrite(handle, values, length);
     }
 
-    static int read(long handle, double[] values) {
-        return nativeRead(handle, values, values.length);
+    static int read(long handle, double[] values, long length) {
+        return nativeRead(handle, values, length);
     }
 
     static int mul(long lhs, long rhs, long[] outHandle) {
-        if (outHandle == null || outHandle.length == 0) {
-            throw new IllegalArgumentException("outHandle must contain at least one element");
-        }
         return nativeMul(lhs, rhs, outHandle);
     }
 }
