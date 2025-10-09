@@ -108,34 +108,34 @@ TEST(DenseMatrixJniTest, MultiplyTest) {
         static_cast<jint>(ok)
     );
 
-    jlong c = 0;
-    env->GetLongArrayRegion(out, 0, 1, &c);
-    ASSERT_NE(c, 0);
+    jlong res = 0;
+    env->GetLongArrayRegion(out, 0, 1, &res);
+    ASSERT_NE(res, 0);
 
-    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeRows(env, nullptr, c), 2);
-    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeCols(env, nullptr, c), 2);
-    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeSize(env, nullptr, c), 4);
+    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeRows(env, nullptr, res), 2);
+    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeCols(env, nullptr, res), 2);
+    EXPECT_EQ(Java_dm_DenseMatrixJni_nativeSize(env, nullptr, res), 4);
 
-    jdoubleArray Carr = env->NewDoubleArray(4);
-    ASSERT_NE(Carr, nullptr);
+    jdoubleArray res_arr = env->NewDoubleArray(4);
+    ASSERT_NE(res_arr, nullptr);
     EXPECT_EQ(
-        Java_dm_DenseMatrixJni_nativeRead(env, nullptr, c, Carr, 4),
+        Java_dm_DenseMatrixJni_nativeRead(env, nullptr, res, res_arr, 4),
         static_cast<jint>(ok)
     );
-    jdouble Cdata[4] = { 0, 0, 0, 0 };
-    env->GetDoubleArrayRegion(Carr, 0, 4, Cdata);
+    jdouble res_data[4] = { 0, 0, 0, 0 };
+    env->GetDoubleArrayRegion(res_arr, 0, 4, res_data);
 
     const double expected[4] = { 58.0, 64.0, 139.0, 154.0 };
     for (int i = 0; i < 4; ++i) {
-        EXPECT_DOUBLE_EQ(Cdata[i], expected[i]);
+        EXPECT_DOUBLE_EQ(res_data[i], expected[i]);
     }
 
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, lhr);
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, rhr);
-    Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, c);
+    Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, res);
     env->DeleteLocalRef(lhr_arr);
     env->DeleteLocalRef(rhr_arr);
-    env->DeleteLocalRef(Carr);
+    env->DeleteLocalRef(res_arr);
     env->DeleteLocalRef(out);
 }
 
@@ -147,9 +147,9 @@ TEST(DenseMatrixJniTest, ReturnZeroTest) {
 }
 
 TEST(DenseMatrixJniTest, NewEmptyTest) {
-    jlong h = Java_dm_DenseMatrixJni_nativeNewEmpty(nullptr, nullptr);
-    ASSERT_NE(h, 0);
-    EXPECT_NO_THROW(Java_dm_DenseMatrixJni_nativeDelete(nullptr, nullptr, h));
+    jlong m = Java_dm_DenseMatrixJni_nativeNewEmpty(nullptr, nullptr);
+    ASSERT_NE(m, 0);
+    EXPECT_NO_THROW(Java_dm_DenseMatrixJni_nativeDelete(nullptr, nullptr, m));
 }
 
 TEST(DenseMatrixJniTest, ReadWriteNullTest) {
@@ -240,9 +240,9 @@ TEST(DenseMatrixJniTest, BadMulTest) {
         Java_dm_DenseMatrixJni_nativeMul(env, nullptr, a, b, out),
         static_cast<jint>(bad_size)
     );
-    jlong out_handle = -1;
-    env->GetLongArrayRegion(out, 0, 1, &out_handle);
-    EXPECT_EQ(out_handle, 0);
+    jlong res = -1;
+    env->GetLongArrayRegion(out, 0, 1, &res);
+    EXPECT_EQ(res, 0);
 
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, a);
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, b);
@@ -256,10 +256,10 @@ TEST(DenseMatrixJniTest, DeleteNullTest) {
 TEST(DenseMatrixJniTest, OverflowTest) {
     JNIEnv* env = get_env();
 
-    const jlong MAX = std::numeric_limits<jlong>::max();
+    const jlong n_max = std::numeric_limits<jlong>::max();
 
-    jlong a = Java_dm_DenseMatrixJni_nativeNew(env, nullptr, MAX, 0);
-    jlong b = Java_dm_DenseMatrixJni_nativeNew(env, nullptr, 0, MAX);
+    jlong a = Java_dm_DenseMatrixJni_nativeNew(env, nullptr, n_max, 0);
+    jlong b = Java_dm_DenseMatrixJni_nativeNew(env, nullptr, 0, n_max);
     ASSERT_NE(a, 0);
     ASSERT_NE(b, 0);
 
@@ -270,9 +270,9 @@ TEST(DenseMatrixJniTest, OverflowTest) {
         Java_dm_DenseMatrixJni_nativeMul(env, nullptr, a, b, out),
         static_cast<jint>(bad_size)
     );
-    jlong out_handle = -1;
-    env->GetLongArrayRegion(out, 0, 1, &out_handle);
-    EXPECT_EQ(out_handle, 0);
+    jlong res = -1;
+    env->GetLongArrayRegion(out, 0, 1, &res);
+    EXPECT_EQ(res, 0);
 
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, a);
     Java_dm_DenseMatrixJni_nativeDelete(env, nullptr, b);

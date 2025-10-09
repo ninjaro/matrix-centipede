@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd ..
 
-#find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\|tpp\|h\)' -exec clang-format -style=file -i {} \;
+find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\|tpp\|h\)' -exec clang-format -style=file -i {} \;
 
 clear
 rm -rf build cov cov.log data/test*.dump

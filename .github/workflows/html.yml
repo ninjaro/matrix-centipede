@@ -83,6 +83,7 @@ jobs:
         run: |
           rm -rf build/
           rm -rf java/build/
+          rm -rf java/.gradle
 
       - name: Build with Jekyll
         uses: actions/jekyll-build-pages@v1
