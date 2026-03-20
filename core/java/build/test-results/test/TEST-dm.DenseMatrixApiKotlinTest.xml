@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dm.DenseMatrixApiKotlinTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2025-10-09T09:26:41.894Z" hostname="YaRiabtsev" time="0.011">
+  <properties/>
+  <testcase name="readWriteNullTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.001"/>
+  <testcase name="newEmptyTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.0"/>
+  <testcase name="readWriteBadSizeTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.0"/>
+  <testcase name="overflowTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.0"/>
+  <testcase name="returnZeroTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.001"/>
+  <testcase name="createMatrixTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.0"/>
+  <testcase name="badMulTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.001"/>
+  <testcase name="multiplyTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.001"/>
+  <testcase name="deleteNullTest()" classname="dm.DenseMatrixApiKotlinTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

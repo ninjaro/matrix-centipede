@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="dm.DenseMatrixJniJavaTest" tests="9" skipped="0" failures="0" errors="0" timestamp="2025-10-09T09:26:41.868Z" hostname="YaRiabtsev" time="0.02">
+  <properties/>
+  <testcase name="readWriteNullTest()" classname="dm.DenseMatrixJniJavaTest" time="0.004"/>
+  <testcase name="newEmptyTest()" classname="dm.DenseMatrixJniJavaTest" time="0.003"/>
+  <testcase name="readWriteBadSizeTest()" classname="dm.DenseMatrixJniJavaTest" time="0.001"/>
+  <testcase name="overflowTest()" classname="dm.DenseMatrixJniJavaTest" time="0.001"/>
+  <testcase name="returnZeroTest()" classname="dm.DenseMatrixJniJavaTest" time="0.001"/>
+  <testcase name="createMatrixTest()" classname="dm.DenseMatrixJniJavaTest" time="0.0"/>
+  <testcase name="badMulTest()" classname="dm.DenseMatrixJniJavaTest" time="0.001"/>
+  <testcase name="multiplyTest()" classname="dm.DenseMatrixJniJavaTest" time="0.0"/>
+  <testcase name="deleteNullTest()" classname="dm.DenseMatrixJniJavaTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
