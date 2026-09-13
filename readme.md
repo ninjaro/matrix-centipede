@@ -1,4 +1,4 @@
-![MC Logo Light](assets/lbanner.svg#gh-light-mode-only)![MC Logo Dark](assets/dbanner.svg#gh-dark-mode-only)
+![MC Logo Light](assets/brand/lbanner.svg#gh-light-mode-only)![MC Logo Dark](assets/brand/dbanner.svg#gh-dark-mode-only)
 
 [![version](https://img.shields.io/github/v/release/ninjaro/matrix-centipede?include_prereleases)](https://github.com/ninjaro/matrix-centipede/releases/latest)
 [![Checks](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml/badge.svg)](https://github.com/ninjaro/matrix-centipede/actions/workflows/tests.yml)
@@ -17,3 +17,8 @@
 > I agree with you; we are unfashioned creatures, if one younger, JetBrains-born, and island-named than ourselves—such a
 > modern programming language ought to be—do play at baubles befitting its age, appropriate foreign artefacts, and
 > desecrate the limbs of its forefathers.
+
+|                    Standard range                   |               Extended range               |
+| :-------------------------------------------------: | :----------------------------------------: |
+| ![](assets/reports/bench_plot--20251007-080107.png) | ![](assets/reports/bench_plot--latest.png) |
+|                     `N: 32–1024`                    |                `N: 32–8192`                |
