@@ -21,4 +21,4 @@
 |                    Standard range                   |               Extended range               |
 | :-------------------------------------------------: | :----------------------------------------: |
 | ![](assets/reports/bench_plot--20251007-080107.png) | ![](assets/reports/bench_plot--latest.png) |
-|                     `N: 32–1024`                    |                `N: 32–8192`                |
+|            `Run on (22 X 1400 MHz CPU s)`           |            `Run on (96 X 3100 MHz CPU s)`  |
