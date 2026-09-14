@@ -1,0 +1,95 @@
+{
+  "id": "matrix_centipede",
+  "description": "Dense matrix library with API, JNI bridge, tests, and benchmarks.",
+  "cpp_standard": 20,
+  "facade": "matrix_api:api",
+  "artifacts": [
+    {
+      "id": "matrix_core:matrix",
+      "kind": "interface_lib",
+      "root": "core",
+      "owns": [
+        "include/core/dense_matrix.hpp",
+        "include/core/dense_matrix.tpp"
+      ]
+    },
+    {
+      "id": "matrix_api:api",
+      "kind": "shared_lib",
+      "name": "matrix",
+      "root": "core",
+      "owns": [
+        "include/api/dense_matrix_api.h",
+        "src/api/dense_matrix_api.cpp"
+      ],
+      "dependencies": [
+        "matrix_core:matrix"
+      ]
+    },
+    {
+      "id": "matrix_jni:jni",
+      "kind": "shared_lib",
+      "name": "matrix_jni",
+      "root": "core",
+      "owns": [
+        "include/jni/dense_matrix_jni.h",
+        "src/jni/dense_matrix_jni.cpp"
+      ],
+      "dependencies": [
+        "matrix_api:api"
+      ],
+      "packages": {
+        "jni": [
+          "required"
+        ]
+      }
+    },
+    {
+      "id": "matrix_tests:tests",
+      "kind": "exe",
+      "name": "unit_tests",
+      "root": "core",
+      "owns": [
+        "tests"
+      ],
+      "entry": "tests/core/dense_matrix_int_tests.cpp",
+      "dependencies": [
+        "matrix_core:matrix",
+        "matrix_api:api",
+        "matrix_jni:jni"
+      ],
+      "packages": {
+        "eigen": [
+          "optional"
+        ],
+        "jni": [
+          "required"
+        ]
+      },
+      "tests": {
+        "gtest": true
+      }
+    },
+    {
+      "id": "matrix_benchmarks:bench",
+      "kind": "exe",
+      "name": "bench_all",
+      "root": "core",
+      "owns": [
+        "benchmarks"
+      ],
+      "entry": "benchmarks/core/dense_matrix_benchmarks.cpp",
+      "dependencies": [
+        "matrix_core:matrix"
+      ],
+      "packages": {
+        "eigen": [
+          "optional"
+        ]
+      },
+      "benchmarks": {
+        "google_benchmark": true
+      }
+    }
+  ]
+}
