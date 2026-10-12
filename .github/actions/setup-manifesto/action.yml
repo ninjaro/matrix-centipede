@@ -7,7 +7,7 @@ inputs:
     required: false
     default: repository
   source-path:
-    description: Relative directory containing the tooling CMakeLists.txt, manifest.json and templates.
+    description: Relative directory containing the tooling CMakeLists.txt, manifest.json and assets/templates.
     required: false
     default: '.'
   manifesto-repository:
@@ -23,9 +23,13 @@ inputs:
     required: false
     default: '2'
   install-docs:
-    description: Install optional pip and Sphinx presentation dependencies.
+    description: Install optional Sphinx presentation dependencies in an isolated Python environment.
     required: false
     default: 'false'
+  install-project-deps:
+    description: Install project build/test dependencies; cheap repository/format checks need only tooling dependencies.
+    required: false
+    default: 'true'
   sphinx-theme-package:
     description: Python package name for the selected Sphinx theme.
     required: false
@@ -99,6 +103,7 @@ runs:
         persist-credentials: false
 
     - name: Install Qt 6
+      if: ${{ inputs.install-project-deps == 'true' }}
       uses: jurplel/install-qt-action@v4
       with:
         version: '6.8.*'
@@ -113,23 +118,30 @@ runs:
         packages=(
           clang
           clang-format
-          clang-tidy
           cmake
-          doxygen
-          graphviz
           ninja-build
           pkg-config
           libclang-dev
           llvm-dev
-          default-jdk
-          libopencv-dev
           libcxxopts-dev
-          libgtest-dev
-          libbenchmark-dev
         )
+        if [ "${{ inputs.install-project-deps }}" = "true" ]; then
+          packages+=(
+            clang-tidy
+            default-jdk
+            libopencv-dev
+            libgtest-dev
+            libbenchmark-dev
+          )
+        fi
+        if [ "${{ inputs.install-project-deps }}" = "true" ] || [ "${{ inputs.install-docs }}" = "true" ]; then
+          packages+=(doxygen graphviz)
+        fi
         if [ "${{ inputs.install-docs }}" = "true" ]; then
           packages+=(
-            python3-pip
+            python3-venv
+            poppler-utils
+            ffmpeg
           )
         fi
         sudo apt-get update
@@ -156,8 +168,10 @@ runs:
       if: ${{ inputs.install-docs == 'true' }}
       shell: bash
       run: |
-        python3 -m pip install --user sphinx myst-parser "${{ inputs.sphinx-theme-package }}"
-        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        docs_env="$GITHUB_WORKSPACE/.ecosystem/tooling/docs-venv"
+        python3 -m venv "$docs_env"
+        "$docs_env/bin/python" -m pip install sphinx breathe myst-parser "${{ inputs.sphinx-theme-package }}"
+        echo "$docs_env/bin" >> "$GITHUB_PATH"
 
     - name: Build Marx and Engels
       shell: bash
@@ -175,8 +189,8 @@ runs:
           "$checkout_root/"*) ;;
           *) echo '::error::Tooling source-path resolves outside its checkout.'; exit 1 ;;
         esac
-        if [ ! -f "$source_root/CMakeLists.txt" ] || [ ! -f "$source_root/manifest.json" ] || [ ! -d "$source_root/templates" ]; then
-          echo '::error::Tooling source-path must contain CMakeLists.txt, manifest.json and templates.'
+        if [ ! -f "$source_root/CMakeLists.txt" ] || [ ! -f "$source_root/manifest.json" ] || [ ! -d "$source_root/assets/templates" ]; then
+          echo '::error::Tooling source-path must contain CMakeLists.txt, manifest.json and assets/templates.'
           exit 1
         fi
         cmake -S "$source_root" -B "$BUILD_ROOT" -DCMAKE_BUILD_TYPE=Debug -DECOSYSTEM_BUILD_TESTS=OFF

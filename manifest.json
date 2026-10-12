@@ -76,7 +76,7 @@
       "name": "bench_all",
       "root": "core",
       "owns": [
-        "benchmarks"
+        "benchmarks/core/dense_matrix_benchmarks.cpp"
       ],
       "entry": "benchmarks/core/dense_matrix_benchmarks.cpp",
       "dependencies": [
