@@ -161,7 +161,7 @@ public:
      * @param c Zero-based column index.
      * @throws std::out_of_range If the indices fall outside the matrix.
      */
-    const T& at(size_t r, size_t c) const;
+    [[nodiscard]] const T& at(size_t r, size_t c) const;
     /**
      * @brief Unchecked mutable element accessor.
      *
